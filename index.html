@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratório .NET 8 MVC | SENAI-RS</title>
+<style>
+:root{
+  --senai-blue:#1554A3;
+  --senai-blue-dark:#0D3D7A;
+  --senai-blue-light:#EAF2FB;
+  --senai-orange:#F36F32;
+  --senai-orange-light:#FFF1E9;
+  --white:#FFFFFF;
+  --bg:#F5F7FA;
+  --text:#243247;
+  --muted:#66758A;
+  --border:#DCE4EE;
+  --success:#23865F;
+  --shadow:0 8px 24px rgba(13,61,122,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+header{background:linear-gradient(135deg,var(--senai-blue-dark),var(--senai-blue));color:#fff;padding:26px 5%}
+.header-wrap{max-width:1180px;margin:auto;display:flex;align-items:center;gap:30px}
+.logo-box{background:#fff;padding:12px 18px;border-radius:14px;box-shadow:var(--shadow)}
+.logo-box img{width:220px;max-width:100%;display:block}
+header h1{margin:0;font-size:clamp(1.7rem,4vw,2.7rem);line-height:1.15}
+header p{margin:8px 0 0;color:#E7F0FA}
+nav{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 3px 14px rgba(0,0,0,.04)}
+.nav-wrap{max-width:1180px;margin:auto;padding:10px 5%;display:flex;gap:8px;overflow:auto}
+nav a{text-decoration:none;color:var(--senai-blue-dark);font-weight:700;white-space:nowrap;padding:8px 12px;border-radius:8px}
+nav a:hover{background:var(--senai-blue-light)}
+main{max-width:1180px;margin:auto;padding:32px 5% 70px}
+.hero{display:grid;grid-template-columns:1.4fr .8fr;gap:22px;margin-bottom:28px}
+.card,.exercise{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
+.card{padding:24px}
+.hero h2{color:var(--senai-blue-dark);margin-top:0}
+.flow{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.flow span{background:var(--senai-blue-light);color:var(--senai-blue-dark);font-weight:700;padding:8px 11px;border-radius:999px}
+.flow b{align-self:center;color:var(--senai-orange)}
+.progress-box h3{margin-top:0;color:var(--senai-blue-dark)}
+.progress{height:12px;background:#E7EDF4;border-radius:20px;overflow:hidden}
+.progress div{height:100%;width:0;background:var(--senai-orange);transition:.3s}
+section>h2{color:var(--senai-blue-dark);font-size:1.8rem;margin:40px 0 16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.exercise{padding:22px;border-top:5px solid var(--senai-blue)}
+.exercise .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.number{display:inline-flex;width:38px;height:38px;border-radius:10px;align-items:center;justify-content:center;background:var(--senai-blue);color:#fff;font-weight:800}
+.level{font-size:.78rem;font-weight:800;color:var(--senai-orange);background:var(--senai-orange-light);padding:5px 9px;border-radius:999px}
+.exercise h3{color:var(--senai-blue-dark);margin:12px 0 7px}
+.exercise ul{padding-left:20px}
+.challenge{background:var(--senai-blue-light);border-left:4px solid var(--senai-blue);padding:12px 14px;border-radius:8px;margin:14px 0}
+.defesa{background:var(--senai-orange-light);border-left:4px solid var(--senai-orange);padding:12px 14px;border-radius:8px;margin-top:14px}
+.check{display:flex;align-items:center;gap:9px;margin-top:15px;color:var(--muted);font-weight:700}
+.check input{width:18px;height:18px;accent-color:var(--senai-blue)}
+.answers{margin-top:22px}
+details{background:#fff;border:1px solid var(--border);border-radius:12px;margin:10px 0;overflow:hidden}
+summary{cursor:pointer;padding:15px 18px;font-weight:800;color:var(--senai-blue-dark)}
+.answer{padding:0 18px 18px}
+pre{overflow:auto;background:#17263A;color:#EAF2FB;border-radius:10px;padding:16px;font-size:.85rem}
+code{font-family:Consolas,monospace}
+.warning{padding:18px;background:var(--senai-orange-light);border:1px solid #FFD7C3;border-radius:12px}
+footer{text-align:center;background:var(--senai-blue-dark);color:#DCE9F7;padding:28px}
+@media(max-width:800px){.hero,.grid{grid-template-columns:1fr}.header-wrap{flex-direction:column;align-items:flex-start}.logo-box img{width:180px}}
+@media print{nav,.check{display:none}.exercise,details,.card{box-shadow:none;break-inside:avoid}body{background:#fff}}
+</style>
+</head>
+<body>
+<header>
+ <div class="header-wrap">
+  <div class="logo-box"><img src="data:image/png;base64,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" alt="SENAI"></div>
+  <div>
+   <h1>Laboratório .NET 8 MVC</h1>
+   <p>ASP.NET Core MVC • Entity Framework Core 8 • SQL Server</p>
+  </div>
+ </div>
+</header>
+<nav><div class="nav-wrap">
+ <a href="#trilha">Trilha</a><a href="#exercicios">Exercícios</a><a href="#gabarito">Gabarito</a><a href="#checklist">Checklist</a>
+</div></nav>
+<main>
+<section class="hero" id="trilha">
+ <div class="card">
+  <h2>Objetivo da prática</h2>
+  <p>Fortalecer a base antes de avançar para arquiteturas mais complexas. O aluno deverá compreender o caminho completo da aplicação, e não apenas reproduzir um CRUD.</p>
+  <div class="flow"><span>View</span><b>→</b><span>Controller</span><b>→</b><span>Service</span><b>→</b><span>EF Core</span><b>→</b><span>SQL Server</span></div>
+ </div>
+ <div class="card progress-box">
+  <h3>Meu progresso</h3>
+  <p><strong id="done">0</strong> de 10 desafios concluídos</p>
+  <div class="progress"><div id="bar"></div></div>
+  <p style="color:var(--muted);font-size:.9rem">Marque cada exercício quando conseguir fazê-lo e explicar seu código.</p>
+ </div>
+</section>
+
+<section id="exercicios">
+<h2>Exercícios progressivos</h2>
+<div class="grid">
+<article class="exercise">
+<div class="top"><span class="number">1</span><span class="level">Base</span></div>
+<h3>Cadastro de Produtos</h3><ul><li>Crie Produto: Id, Nome, Preço e QuantidadeEstoque.</li><li>Configure DbContext, SQL Server e migration.</li><li>Implemente Listar, Criar, Editar, Detalhes e Excluir.</li></ul>
+<div class="defesa"><strong>Pergunta de defesa:</strong> Explique DbContext, DbSet e o que a migration fez.</div>
+<label class="check"><input class="done-check" type="checkbox"> Consegui fazer e explicar</label>
+</article>
+<article class="exercise">
+<div class="top"><span class="number">2</span><span class="level">Base</span></div>
+<h3>Validação de Produtos</h3><ul><li>Nome obrigatório, entre 3 e 100 caracteres.</li><li>Preço maior que zero.</li><li>Estoque não pode ser negativo.</li><li>Exiba os erros na View.</li></ul>
+<div class="defesa"><strong>Pergunta de defesa:</strong> Por que verificar ModelState.IsValid antes de salvar?</div>
+<label class="check"><input class="done-check" type="checkbox"> Consegui fazer e explicar</label>
+</article>
+<article class="exercise">
+<div class="top"><span class="number">3</span><span class="level">Intermediário</span></div>
+<h3>Pesquisa e Filtros</h3><ul><li>Pesquise por parte do nome.</li><li>Filtre preço mínimo e máximo.</li><li>Crie a opção 'Somente em estoque'.</li><li>Permita combinar filtros usando LINQ.</li></ul>
+<div class="defesa"><strong>Pergunta de defesa:</strong> O que muda entre filtrar antes e depois do ToListAsync()?</div>
+<label class="check"><input class="done-check" type="checkbox"> Consegui fazer e explicar</label>
+</article>
+<article class="exercise">
+<div class="top"><span class="number">4</span><span class="level">Intermediário</span></div>
+<h3>Controle de Estoque</h3><ul><li>Crie Entrada e Saída.</li><li>Entrada soma ao estoque atual.</li><li>Saída subtrai.</li><li>Não permita saída maior que o estoque.</li></ul>
+<div class="defesa"><strong>Pergunta de defesa:</strong> Por que estoque negativo é regra de negócio?</div>
+<label class="check"><input class="done-check" type="checkbox"> Consegui fazer e explicar</label>
+</article>
+<article class="exercise">
+<div class="top"><span class="number">5</span><span class="level">Intermediário</span></div>
+<h3>Categorias e Produtos</h3><ul><li>Crie Categoria: Id e Nome.</li><li>Modele Categoria 1:N Produto.</li><li>Use CategoriaId como FK.</li><li>Mostre Categoria em select e na listagem.</li></ul>
+<div class="defesa"><strong>Pergunta de defesa:</strong> Explique FK, propriedade de navegação e Include().</div>
+<label class="check"><input class="done-check" type="checkbox"> Consegui fazer e explicar</label>
+</article>
+<article class="exercise">
+<div class="top"><span class="number">6</span><span class="level">Intermediário</span></div>
+<h3>Clientes e Pedidos</h3><ul><li>Crie Cliente e Pedido.</li><li>Cliente possui vários pedidos.</li><li>Crie pedido selecionando cliente.</li><li>Mostre os pedidos nos detalhes do cliente.</li></ul>
+<div class="defesa"><strong>Pergunta de defesa:</strong> Como o EF Core representa esse relacionamento no SQL Server?</div>
+<label class="check"><input class="done-check" type="checkbox"> Consegui fazer e explicar</label>
+</article>
+<article class="exercise">
+<div class="top"><span class="number">7</span><span class="level">Avançando</span></div>
+<h3>Sistema de Biblioteca</h3><ul><li>Crie Aluno, Livro e Emprestimo.</li><li>Implemente empréstimo e devolução.</li><li>Não empreste livro indisponível.</li><li>Liste ativos e histórico.</li></ul>
+<div class="defesa"><strong>Pergunta de defesa:</strong> Quais entidades mudam durante empréstimo e devolução?</div>
+<label class="check"><input class="done-check" type="checkbox"> Consegui fazer e explicar</label>
+</article>
+<article class="exercise">
+<div class="top"><span class="number">8</span><span class="level">Avançando</span></div>
+<h3>Dashboard com EF Core</h3><ul><li>Mostre totais de livros e alunos.</li><li>Conte empréstimos ativos e livros disponíveis.</li><li>Mostre os 5 empréstimos recentes.</li><li>Crie DashboardViewModel.</li></ul>
+<div class="defesa"><strong>Pergunta de defesa:</strong> Por que usar ViewModel em vez de uma Entity nessa tela?</div>
+<label class="check"><input class="done-check" type="checkbox"> Consegui fazer e explicar</label>
+</article>
+<article class="exercise">
+<div class="top"><span class="number">9</span><span class="level">Avançando</span></div>
+<h3>Refatoração com Service</h3><ul><li>Retire a regra de empréstimo do Controller.</li><li>Crie EmprestimoService.</li><li>Registre-o com DI.</li><li>Controller deve chamar o Service.</li></ul>
+<div class="defesa"><strong>Pergunta de defesa:</strong> Explique View → Controller → Service → DbContext → SQL Server.</div>
+<label class="check"><input class="done-check" type="checkbox"> Consegui fazer e explicar</label>
+</article>
+<article class="exercise">
+<div class="top"><span class="number">10</span><span class="level">Final</span></div>
+<h3>Desafio Final: Oficina</h3><ul><li>Crie Cliente, Veiculo, Servico e OrdemServico.</li><li>Pesquise por placa e filtre por status.</li><li>Crie dashboard.</li><li>Defina ao menos 3 regras de negócio.</li><li>Entregue o diagrama antes do código.</li></ul>
+<div class="defesa"><strong>Pergunta de defesa:</strong> Justifique o que pertence ao Controller, Service e DbContext.</div>
+<label class="check"><input class="done-check" type="checkbox"> Consegui fazer e explicar</label>
+</article>
+</div>
+</section>
+
+<section id="gabarito" class="answers">
+<h2>Gabarito comentado</h2>
+<div class="warning"><strong>Professor:</strong> o objetivo do gabarito é orientar a correção. Existem outras implementações válidas quando o aluno consegue justificar suas decisões.</div>
+
+<details><summary>1. Cadastro de Produtos</summary><div class="answer"><pre><code>public class Produto
+{
+    public int Id { get; set; }
+    public string Nome { get; set; } = string.Empty;
+    public decimal Preco { get; set; }
+    public int QuantidadeEstoque { get; set; }
+}
+
+public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions&lt;AppDbContext&gt; options)
+        : base(options) { }
+
+    public DbSet&lt;Produto&gt; Produtos { get; set; }
+}</code></pre><p>O <strong>DbContext</strong> representa a sessão de trabalho com o banco. O <strong>DbSet</strong> representa o conjunto de Produtos consultado e persistido pelo EF Core.</p></div></details>
+
+<details><summary>2. Validações</summary><div class="answer"><pre><code>[Required]
+[StringLength(100, MinimumLength = 3)]
+public string Nome { get; set; } = string.Empty;
+
+[Range(0.01, double.MaxValue)]
+public decimal Preco { get; set; }
+
+[Range(0, int.MaxValue)]
+public int QuantidadeEstoque { get; set; }</code></pre><p>No POST, verifique <code>ModelState.IsValid</code> antes de salvar. A validação do servidor continua necessária mesmo que a View tenha validação no navegador.</p></div></details>
+
+<details><summary>3. Pesquisa e filtros com LINQ</summary><div class="answer"><pre><code>var query = _context.Produtos.AsQueryable();
+
+if (!string.IsNullOrWhiteSpace(nome))
+    query = query.Where(p =&gt; p.Nome.Contains(nome));
+
+if (precoMin.HasValue)
+    query = query.Where(p =&gt; p.Preco &gt;= precoMin.Value);
+
+if (somenteEstoque)
+    query = query.Where(p =&gt; p.QuantidadeEstoque &gt; 0);
+
+var produtos = await query.ToListAsync();</code></pre><p>Os filtros são montados antes da materialização. O EF Core pode traduzi-los para SQL e executar o filtro no banco.</p></div></details>
+
+<details><summary>4. Regra de estoque</summary><div class="answer"><pre><code>var produto = await _context.Produtos.FindAsync(id);
+if (produto == null) return NotFound();
+
+if (quantidade &lt;= 0)
+    return BadRequest();
+
+if (produto.QuantidadeEstoque &lt; quantidade)
+{
+    ModelState.AddModelError("", "Estoque insuficiente.");
+    return View(produto);
+}
+
+produto.QuantidadeEstoque -= quantidade;
+await _context.SaveChangesAsync();</code></pre><p>Não permitir estoque negativo é uma regra de negócio e precisa ser protegida no servidor.</p></div></details>
+
+<details><summary>5. Categoria 1:N Produto</summary><div class="answer"><pre><code>public class Categoria
+{
+    public int Id { get; set; }
+    public string Nome { get; set; } = string.Empty;
+    public ICollection&lt;Produto&gt; Produtos { get; set; } = new List&lt;Produto&gt;();
+}
+
+public class Produto
+{
+    public int Id { get; set; }
+    public string Nome { get; set; } = string.Empty;
+    public int CategoriaId { get; set; }
+    public Categoria? Categoria { get; set; }
+}</code></pre><p><code>CategoriaId</code> é a FK. Para trazer os dados relacionados, uma consulta pode usar <code>.Include(p =&gt; p.Categoria)</code>.</p></div></details>
+
+<details><summary>6. Clientes e Pedidos</summary><div class="answer"><p>O relacionamento esperado é <strong>Cliente 1:N Pedido</strong>. Pedido possui <code>ClienteId</code> e a navegação <code>Cliente</code>. Para detalhes do cliente, pode-se consultar Cliente usando <code>Include(c =&gt; c.Pedidos)</code>.</p></div></details>
+
+<details><summary>7. Biblioteca</summary><div class="answer"><p>Ao emprestar, consulte o Livro, verifique <code>Disponivel</code>, crie o Emprestimo e altere o Livro para indisponível. Na devolução, preencha <code>DataDevolucao</code> e torne o livro disponível novamente.</p></div></details>
+
+<details><summary>8. Dashboard</summary><div class="answer"><pre><code>TotalLivros = await _context.Livros.CountAsync();
+TotalAlunos = await _context.Alunos.CountAsync();
+
+EmprestimosAtivos = await _context.Emprestimos
+    .CountAsync(e =&gt; e.DataDevolucao == null);
+
+Recentes = await _context.Emprestimos
+    .Include(e =&gt; e.Aluno)
+    .Include(e =&gt; e.Livro)
+    .OrderByDescending(e =&gt; e.DataEmprestimo)
+    .Take(5)
+    .ToListAsync();</code></pre><p>Um <strong>DashboardViewModel</strong> é apropriado porque a tela reúne dados agregados de entidades diferentes.</p></div></details>
+
+<details><summary>9. Service + DI</summary><div class="answer"><pre><code>builder.Services.AddScoped&lt;EmprestimoService&gt;();</code></pre><p>A regra de empréstimo pode sair do Controller e ir para <code>EmprestimoService</code>. O fluxo fica: Controller → Service → DbContext → SQL Server.</p></div></details>
+
+<details><summary>10. Projeto Oficina</summary><div class="answer"><p>Estrutura mínima esperada: <strong>Cliente 1:N Veiculo</strong> e <strong>Veiculo 1:N OrdemServico</strong>. O aluno deve justificar a modelagem de Serviço, as FKs, as regras de finalização e a separação das responsabilidades.</p></div></details>
+</section>
+
+<section id="checklist">
+<h2>Checklist de domínio</h2>
+<div class="card">
+<p>Ao terminar, o aluno deve conseguir explicar: MVC; DbContext e DbSet; connection string; migrations; CRUD assíncrono; ModelState; LINQ; FK e relacionamentos; Include; Entity x ViewModel; regra de negócio; Service; injeção de dependência; e o caminho completo da requisição até o SQL Server.</p>
+</div>
+</section>
+</main>
+<footer>Material didático • ASP.NET Core MVC .NET 8 • EF Core 8 • SQL Server</footer>
+<script>
+const checks=[...document.querySelectorAll('.done-check')];
+function update(){
+ const n=checks.filter(c=>c.checked).length;
+ document.getElementById('done').textContent=n;
+ document.getElementById('bar').style.width=(n*10)+'%';
+ checks.forEach((c,i)=>localStorage.setItem('mvc-ex-'+i,c.checked?'1':'0'));
+}
+checks.forEach((c,i)=>{
+ c.checked=localStorage.getItem('mvc-ex-'+i)==='1';
+ c.addEventListener('change',update);
+});
+update();
+</script>
+</body>
+</html>
